@@ -1,16 +1,26 @@
-# This is a sample Python script.
+# Names:
+# Mackenzie Johnson
+# Christian Rodriguez
+#
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import re # regex import
 
+# token definition
+#put NamedTuple inside token
+class Token():
+	type: str
+	value: str
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# TinyPie function
+def TinyPie(string1):
+	keywords: {"if"}	#type defintions here
+	integers: {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
+	operator: {"*"}
+	seperator: {")"}
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# start of main area
+str1 = "int A1 = 5"
+str2 = "float BBB2 =1034.2"
+str3 = "float cresult = A1 +BBB2 * BBB2"
+str4 = "if (cresult >10):"
+str5 = "     print(“TinyPie   “)"
