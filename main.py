@@ -3,7 +3,7 @@
 # Christian Rodriguez
 #
 
-import re # regex import
+#import re # regex import
 
 # token definition
 #put NamedTuple inside token
