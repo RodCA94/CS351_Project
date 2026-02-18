@@ -24,3 +24,8 @@ str2 = "float BBB2 =1034.2"
 str3 = "float cresult = A1 +BBB2 * BBB2"
 str4 = "if (cresult >10):"
 str5 = "     print(“TinyPie   “)"
+
+strs = [str1, str2, str3, str4, str5]
+
+for s in strs:
+	print(s)
