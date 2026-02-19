@@ -36,13 +36,9 @@ str3 = "float cresult = A1 +BBB2 * BBB2"
 str4 = "if (cresult >10):"
 str5 = "     print(“TinyPie   “)"
 
-#strs = [str1, str2, str3, str4, str5]
+strs = [str1, str2, str3, str4, str5]
 
-#for s in strs:
-	#print(s)
+for s in strs:
+	CutOneLineTokens(s)
 
-CutOneLineTokens(str1)
-CutOneLineTokens(str2)
-CutOneLineTokens(str3)
-CutOneLineTokens(str4)
-CutOneLineTokens(str5)
+
