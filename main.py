@@ -7,6 +7,7 @@ import re
 
 #Token Defenitions
 keywords = [r"(if)\s", r"(else)\s", r"(int)\s", r"(float)\s"]
+identifiers = [r"[A-Za-z_][A-Za-z0-9_]*"]
 integers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 operators = ["=", "+", ">", "*"]
 seperators = ["(", ")", ":", "\"", ";"]
