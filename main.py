@@ -45,7 +45,8 @@ def CutOneLineTokens(s):
 		print("Invalid Syntax: No Keywords Found")
 		return
 
-	print("key:", key)
+	print("[<Key," + key + ">]")
+
 
 # start of main area
 str1 = "int A1=5"
