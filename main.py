@@ -48,6 +48,7 @@ def CutOneLineTokens(s):
 	print("[<Key," + key + ">]")
 
 
+
 # start of main area
 str1 = "int A1=5"
 str2 = "float BBB2 =1034.2"
