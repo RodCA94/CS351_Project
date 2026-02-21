@@ -6,47 +6,31 @@
 import re
 
 #Token Defenitions
-keywords = [r"(if)\s", r"(else)\s", r"(int)\s", r"(float)\s"]
-identifiers = [r"[A-Za-z_][A-Za-z0-9_]*"]
-integers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+keywords = {"if", "else", "int", "float)"}
+
+#Build regress match
+frontSpace = re.compile(r"^\s+")
+identifiers = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+integers = re.compile(r"^\d+")
+floats = re.compile(r"^\d+\.\d+")
+stringLit = re.compile(r'^"[^"\n]*"')
+
 operators = ["=", "+", ">", "*"]
-seperators = ["(", ")", ":", "\"", ";"]
+seperators = ["(", ")", ":", ";"]
 
 # TinyPie function
 def CutOneLineTokens(s):
 	print("Test input string:", s)
 
-	#Validate only 1 keyword
-	keywordCount = 0
-	for i in keywords:
-		count = len(re.findall(i,s))
-		keywordCount += count
-		if keywordCount > 1:
-			print("Invalid Syntax: Multiple Keywords")
-			return
+	token = []
 
-	# store tokens
-	key = ""
-	operatorToken = []
-	seperatorToken = []
-	identifierToken = []
-	intToken = []
-	floatToken = []
-	strToken = []
-
-	# Removes the keyword found in line
-	for k in keywords:
-		m = re.search(k, s) # look for a match
+	while s:
+		# starts by removing all white space at the front of the string
+		m = frontSpace.match(s)
 		if m:
-			key = m.group(1)
-			s = re.sub(k, "", s)
-
-	# Error detection if no keywords are found
-	if (key == ""):
-		print("Invalid Syntax: No Keywords Found")
-		return
-
-	print("[<Key," + key + ">]")
+			s = s[m.end():]
+			continue
+		print(s)
 
 
 
