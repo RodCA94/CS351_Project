@@ -100,6 +100,7 @@ str5 = "     print(\"TinyPie   \")"
 strs = [str1, str2, str3, str4, str5]
 
 for s in strs:
-	print(CutOneLineTokens(s))
+	token = CutOneLineTokens(s)
+	print("[" +", ".join(token) + "]")
 
 
