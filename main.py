@@ -91,7 +91,7 @@ def CutOneLineTokens(s):
 	return(output)
 
 # start of main area
-str1 = "int A1=5@"
+str1 = "int A1=5"
 str2 = "float BBB2 =1034.2"
 str3 = "float cresult = A1 +BBB2 * BBB2"
 str4 = "if (cresult >10):"
