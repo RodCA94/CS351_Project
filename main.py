@@ -86,7 +86,7 @@ def CutOneLineTokens(s):
 			continue
 
 		# if program reaches this line it means there are invalid characters
-		return("Invalid character input:", s)
+		return "Invalid character input:", s[0]
 
 	return(output)
 
