@@ -5,19 +5,19 @@
 
 import re
 
-# Token Defenitions
+# Token Definitions
 keywords = {"if", "else", "int", "float"}
 
-# Build regress match, searches from left to right
-frontSpace = re.compile(r"^\s+")
-identifiers = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*")
-integers = re.compile(r"^\d+")
-floats = re.compile(r"^\d+\.\d+")
-stringLit = re.compile(r'^"[^"\n]*"')
+# Build regress match
+frontSpace = r"^\s+"
+identifiers = r"^[A-Za-z_][A-Za-z0-9_]*"
+integers = r"^\d+"
+floats = r"^\d+\.\d+"
+stringLit = r'^"[^"\n]*"'
 
 # single char match
 operators = ["=", "+", ">", "*"]
-seperators = ["(", ")", ":", ";"]
+separators = ["(", ")", ":", ";"]
 
 # TinyPie function
 def CutOneLineTokens(s):
@@ -27,13 +27,13 @@ def CutOneLineTokens(s):
 
 	while s:
 		# starts by removing all white space at the front of the string
-		m = frontSpace.match(s)
+		m = re.match(frontSpace, s)
 		if m:
 			s = s[m.end():]
 			continue
 
 		# look for string literals
-		m = stringLit.match(s)
+		m = re.match(stringLit, s)
 		if m:
 			# add the token to the end of the output
 			token = m.group(0)
@@ -43,7 +43,7 @@ def CutOneLineTokens(s):
 			continue
 
 		# look for floats first
-		m = floats.match(s)
+		m = re.match(floats, s)
 		if m:
 			token = m.group(0)
 			output.append(f"<float,{token}>")
@@ -51,7 +51,7 @@ def CutOneLineTokens(s):
 			continue
 
 		# then we look for integers
-		m = integers.match(s)
+		m = re.match(integers, s)
 		if m:
 			token = m.group(0)
 			output.append(f"<int,{token}>")
@@ -59,7 +59,7 @@ def CutOneLineTokens(s):
 			continue
 
 		# look for identifiers and check if they are keywords
-		m = identifiers.match(s)
+		m = re.match(identifiers, s)
 		if m:
 			token = m.group(0)
 			# keyword
@@ -80,7 +80,7 @@ def CutOneLineTokens(s):
 			continue
 
 		# seperator
-		if char in seperators:
+		if char in separators:
 			output.append(f"<sep,{char}>")
 			s = s[1:]
 			continue
