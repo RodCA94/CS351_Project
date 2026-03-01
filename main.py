@@ -6,6 +6,9 @@
 import re
 from tkinter import *
 
+#GUI Line
+currentLineNumber = 0
+
 # Token Definitions
 keywords = {"if", "else", "int", "float"}
 
@@ -106,23 +109,53 @@ for s in strs:
 
 
 # GUI def
+def processLine():
+	global currentLineNumber
+
+	text = sourceBox.get("1.0", END)
+	lines = text.splitlines()
+
+	if currentLineNumber < len(lines):
+		line = lines[currentLineNumber]
+		# writes to outputBox then makes read only again
+		outputBox.config(state="normal")
+		outputBox.insert(END, line + "\n")
+		outputBox.config(state="disabled")
+
+		# update processing line
+		currentLine.config(text=str(currentLineNumber + 1))
+		currentLineNumber += 1
+
 def exitWindow():
 	root.destroy()
 
 # start of GUI
 root = Tk()
-root.geometry("1000x700")
+root.geometry("1000x500")
 root.title("Lexical Analyzer for TinyPie")
 
+# labels
 inputLabel = Label(root, text="Source Code Input:")
+inputLabel.place(x=50, y=50)
 resultLabel = Label(root, text="Lexical Analyzed Result:")
+resultLabel.place(x=550, y=50)
 lineLabel = Label(root, text="Current Processing Line:")
+lineLabel.place(x=50, y=380)
+currentLine = Label(root, text="0", relief="solid", width=5)
+currentLine.place(x=195, y=380)
 
+# buttons
 quitButton = Button(root, text="Quit", command=exitWindow, bg = "red")
-nextLineButton = Button(root, text="Next Line", bg="green")
+quitButton.place(x=700, y=420, width=80)
+nextLineButton = Button(root, text="Next Line",command=processLine, bg="green")
+nextLineButton.place(x=155, y=420, width=80)
 
+# text box
+sourceBox = Text(root, height=18, width=40)
+sourceBox.place(x=50, y=80)
+# outputBox is read only
+outputBox = Text(root, height=18, width=40,state="disabled")
+outputBox.place(x=550, y=80)
 
-nextLineButton.pack()
-quitButton.pack()
-
+# run GUI
 root.mainloop()
