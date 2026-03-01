@@ -4,6 +4,7 @@
 # Andrew Muller
 
 import re
+from tkinter import *
 
 # Token Definitions
 keywords = {"if", "else", "int", "float"}
@@ -104,3 +105,24 @@ for s in strs:
 	print("[" +", ".join(token) + "]")
 
 
+# GUI def
+def exitWindow():
+	root.destroy()
+
+# start of GUI
+root = Tk()
+root.geometry("1000x700")
+root.title("Lexical Analyzer for TinyPie")
+
+inputLabel = Label(root, text="Source Code Input:")
+resultLabel = Label(root, text="Lexical Analyzed Result:")
+lineLabel = Label(root, text="Current Processing Line:")
+
+quitButton = Button(root, text="Quit", command=exitWindow, bg = "red")
+nextLineButton = Button(root, text="Next Line", bg="green")
+
+
+nextLineButton.pack()
+quitButton.pack()
+
+root.mainloop()
