@@ -122,9 +122,42 @@ def processLine():
 		outputBox.insert(END, line + "\n")
 		outputBox.config(state="disabled")
 
+		# call to highlight line
+		highlightLine()
+
 		# update processing line
 		currentLine.config(text=str(currentLineNumber + 1))
 		currentLineNumber += 1
+
+
+#update line numbers function
+def updateLineNumbers(event=None):
+	# Count lines in sourceBox
+	text = sourceBox.get("1.0", END)
+	lines = text.count("\n")  # number of lines
+
+	# Build the numbering text
+	nums = "\n".join(str(i) for i in range(1, lines + 1))
+
+	# Update the lineNumbers widget
+	lineNumbers.config(state="normal")
+	lineNumbers.delete("1.0", END)
+	lineNumbers.insert("1.0", nums)
+	lineNumbers.config(state="disabled")
+
+
+# function to highlight each line
+def highlightLine():
+	global currentLineNumber
+
+	sourceBox.tag_remove("highlight", "1.0", END)
+
+	line_index = f"{currentLineNumber + 1}.0"
+	line_end = f"{currentLineNumber + 1}.end"
+
+	sourceBox.tag_add("highlight", line_index, line_end)
+	sourceBox.tag_config("highlight", background="yellow")
+
 
 def exitWindow():
 	root.destroy()
@@ -151,8 +184,14 @@ nextLineButton = Button(root, text="Next Line",command=processLine, bg="green")
 nextLineButton.place(x=155, y=420, width=80)
 
 # text box
-sourceBox = Text(root, height=18, width=40)
-sourceBox.place(x=50, y=80)
+sourceBox = Text(root, height=18, width=40, padx=10)
+sourceBox.place(x=60, y=80)
+sourceBox.bind("<KeyRelease>", updateLineNumbers)
+
+#line numbers
+lineNumbers = Text(root, width=2, height=18, state="disabled")
+lineNumbers.place(x=50, y=80)
+
 # outputBox is read only
 outputBox = Text(root, height=18, width=40,state="disabled")
 outputBox.place(x=550, y=80)
