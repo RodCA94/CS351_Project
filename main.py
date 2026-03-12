@@ -4,10 +4,13 @@
 # Andrew Muller
 
 import re
+from asyncio.windows_events import NULL
 from tkinter import *
 
 #GUI Line
 currentLineNumber = 0
+initialClick = False
+lines = []
 
 # Token Definitions
 keywords = {"if", "else", "int", "float"}
@@ -95,31 +98,43 @@ def CutOneLineTokens(s):
 	return(output)
 
 # start of main area
-str1 = "int A1=5"
-str2 = "float BBB2 =1034.2"
-str3 = "float cresult = A1 +BBB2 * BBB2"
-str4 = "if (cresult >10):"
-str5 = "     print(\"TinyPie   \")"
 
-strs = [str1, str2, str3, str4, str5]
+####### PHASE 1 Commented out ################
+# str1 = "int A1=5"
+# str2 = "float BBB2 =1034.2"
+# str3 = "float cresult = A1 +BBB2 * BBB2"
+# str4 = "if (cresult >10):"
+# str5 = "     print(\"TinyPie   \")"
 
-for s in strs:
-	token = CutOneLineTokens(s)
-	print("[" +", ".join(token) + "]")
+# strs = [str1, str2, str3, str4, str5]
 
+# for s in strs:
+#	token = CutOneLineTokens(s)
+#	print("[" +", ".join(token) + "]")
+###############################################
 
 # GUI def
 def processLine():
-	global currentLineNumber
+	global currentLineNumber, initialClick, lines
+	output = []
 
-	text = sourceBox.get("1.0", END)
-	lines = text.splitlines()
+	if not initialClick:
+		text = sourceBox.get("1.0", END)
+		lines = text.splitlines()
+		initialClick = True
+	# indents new processing line
+	else:
+		outputBox.config(state="normal")
+		outputBox.insert(END, "\n")
+		outputBox.config(state="disabled")
 
 	if currentLineNumber < len(lines):
 		line = lines[currentLineNumber]
 		# writes to outputBox then makes read only again
+		output = CutOneLineTokens(line)
 		outputBox.config(state="normal")
-		outputBox.insert(END, line + "\n")
+		outputBox.insert(END, "\n".join(output))
+		outputBox.insert(END, "\n")
 		outputBox.config(state="disabled")
 
 		# call to highlight line
