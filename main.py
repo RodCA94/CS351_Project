@@ -113,6 +113,249 @@ def CutOneLineTokens(s):
 #	print("[" +", ".join(token) + "]")
 ###############################################
 
+# Parser Code
+parseTokens = []
+inToken = ("empty", "empty")
+parseOutput = []
+
+
+def convertTokens(tokenList):
+    result = []
+
+    for t in tokenList:
+        t = t.strip()
+
+        if t.startswith("<") and t.endswith(">"):
+            t = t[1:-1]
+
+        parts = t.split(",", 1)
+
+        if len(parts) == 2:
+            result.append((parts[0].strip(), parts[1].strip()))
+
+    return result
+
+
+def accept_token():
+    global inToken, parseTokens, parseOutput
+
+    parseOutput.append("     accept token from the list:" + inToken[1])
+
+    if len(parseTokens) > 0:
+        inToken = parseTokens.pop(0)
+    else:
+        inToken = ("empty", "empty")
+
+
+def math_exp():
+    global inToken, parseOutput
+
+    parseOutput.append("\n----parent node math_exp, finding children nodes:")
+    parseOutput.append("child node (internal): multi")
+    multi()
+
+    if inToken[1] == "+":
+        parseOutput.append("child node (token):+")
+        accept_token()
+
+        parseOutput.append("child node (internal): math_exp")
+        math_exp()
+
+
+def multi():
+    global inToken, parseOutput
+
+    parseOutput.append("\n----parent node multi, finding children nodes:")
+
+    if inToken[0] == "int":
+        parseOutput.append("child node (internal): int")
+        parseOutput.append("   int has child node (token):" + inToken[1])
+        accept_token()
+
+    elif inToken[0] == "float":
+        parseOutput.append("child node (internal): float")
+        parseOutput.append("   float has child node (token):" + inToken[1])
+        accept_token()
+
+    else:
+        parseOutput.append("ERROR: multi expects int or float")
+        return
+
+    if inToken[1] == "*":
+        parseOutput.append("child node (token):*")
+        accept_token()
+
+        parseOutput.append("child node (internal): multi")
+        multi()
+
+
+def exp():
+    global inToken, parseOutput
+
+    parseOutput.append("\n----parent node exp, finding children nodes:")
+
+    if inToken[1] == "float":
+        parseOutput.append("child node (token):float")
+        accept_token()
+    else:
+        parseOutput.append("ERROR: math line should start with keyword float")
+        return
+
+    if inToken[0] == "id":
+        parseOutput.append("child node (internal): identifier")
+        parseOutput.append("   identifier has child node (token):" + inToken[1])
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected identifier after float")
+        return
+
+    if inToken[1] == "=":
+        parseOutput.append("child node (token):=")
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected = after identifier")
+        return
+
+    parseOutput.append("child node (internal): math_exp")
+    math_exp()
+
+    if inToken[1] == ";":
+        parseOutput.append("child node (token):;")
+        parseOutput.append("\nparse tree building success!")
+    else:
+        parseOutput.append("ERROR: expected ; at end of math line")
+
+
+def if_exp():
+    global inToken, parseOutput
+
+    parseOutput.append("\n----parent node if_exp, finding children nodes:")
+
+    if inToken[1] == "if":
+        parseOutput.append("child node (token):if")
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected if")
+        return
+
+    if inToken[1] == "(":
+        parseOutput.append("child node (token):(")
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected (")
+        return
+
+    parseOutput.append("child node (internal): comparison_exp")
+    comparison_exp()
+
+    if inToken[1] == ")":
+        parseOutput.append("child node (token):)")
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected )")
+        return
+
+    if inToken[1] == ":":
+        parseOutput.append("child node (token)::")
+        accept_token()
+        parseOutput.append("\nparse tree building success!")
+    else:
+        parseOutput.append("ERROR: expected :")
+
+
+def comparison_exp():
+    global inToken, parseOutput
+
+    parseOutput.append("\n----parent node comparison_exp, finding children nodes:")
+
+    if inToken[0] == "id":
+        parseOutput.append("child node (internal): identifier")
+        parseOutput.append("   identifier has child node (token):" + inToken[1])
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected identifier")
+        return
+
+    if inToken[1] == ">":
+        parseOutput.append("child node (token):>")
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected >")
+        return
+
+    if inToken[0] == "id":
+        parseOutput.append("child node (internal): identifier")
+        parseOutput.append("   identifier has child node (token):" + inToken[1])
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected identifier")
+
+
+def print_exp():
+    global inToken, parseOutput
+
+    parseOutput.append("\n----parent node print_exp, finding children nodes:")
+
+    if inToken[1] == "print":
+        parseOutput.append("child node (token):print")
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected print")
+        return
+
+    if inToken[1] == "(":
+        parseOutput.append("child node (token):(")
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected (")
+        return
+
+    if inToken[0] == "str":
+        parseOutput.append("child node (internal): string")
+        parseOutput.append("   string has child node (token):" + inToken[1])
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected string")
+        return
+
+    if inToken[1] == ")":
+        parseOutput.append("child node (token):)")
+        accept_token()
+    else:
+        parseOutput.append("ERROR: expected )")
+        return
+
+    if inToken[1] == ";":
+        parseOutput.append("child node (token):;")
+        parseOutput.append("\nparse tree building success!")
+    else:
+        parseOutput.append("ERROR: expected ;")
+
+
+def parser(tokenList, lineNumber):
+    global parseTokens, inToken, parseOutput
+
+    parseOutput = []
+    parseTokens = convertTokens(tokenList)
+
+    if len(parseTokens) == 0:
+        return ""
+
+    inToken = parseTokens.pop(0)
+
+    parseOutput.append("#### Parse tree for line " + str(lineNumber) + " ####")
+
+    if lineNumber == 1 or lineNumber == 2:
+        exp()
+    elif lineNumber == 3:
+        if_exp()
+    elif lineNumber == 4:
+        print_exp()
+    else:
+        parseOutput.append("ERROR: This assignment only expects 4 lines.")
+
+    return "\n".join(parseOutput)
+
 # GUI def
 def processLine():
 	global currentLineNumber, initialClick, lines
@@ -124,18 +367,23 @@ def processLine():
 		initialClick = True
 	# indents new processing line
 	else:
-		outputBox.config(state="normal")
-		outputBox.insert(END, "\n")
-		outputBox.config(state="disabled")
+		tokenBox.config(state="normal")
+		tokenBox.insert(END, "\n")
+		tokenBox.config(state="disabled")
 
 	if currentLineNumber < len(lines):
 		line = lines[currentLineNumber]
 		# writes to outputBox then makes read only again
 		output = CutOneLineTokens(line)
-		outputBox.config(state="normal")
-		outputBox.insert(END, "\n".join(output))
-		outputBox.insert(END, "\n")
-		outputBox.config(state="disabled")
+		tokenBox.config(state="normal")
+		tokenBox.insert(END, "\n".join(output))
+		tokenBox.insert(END, "\n")
+		tokenBox.config(state="disabled")
+
+		parseResult = parser(output, currentLineNumber + 1)
+		parseBox.config(state="normal")
+		parseBox.insert(END, parseResult + "\n\n")
+		parseBox.config(state="disabled")
 
 		# call to highlight line
 		highlightLine()
@@ -179,14 +427,16 @@ def exitWindow():
 
 # start of GUI
 root = Tk()
-root.geometry("1000x500")
+root.geometry("1200x500")
 root.title("Lexical Analyzer for TinyPie")
 
 # labels
 inputLabel = Label(root, text="Source Code Input:")
 inputLabel.place(x=50, y=50)
-resultLabel = Label(root, text="Lexical Analyzed Result:")
-resultLabel.place(x=550, y=50)
+tokenLabel = Label(root, text="Tokens:")
+tokenLabel.place(x=420, y=50)
+parseLabel = Label(root, text="Parse Tree:")
+parseLabel.place(x=760, y=50)
 lineLabel = Label(root, text="Current Processing Line:")
 lineLabel.place(x=50, y=380)
 currentLine = Label(root, text="0", relief="solid", width=5)
@@ -194,7 +444,7 @@ currentLine.place(x=195, y=380)
 
 # buttons
 quitButton = Button(root, text="Quit", command=exitWindow, bg = "red")
-quitButton.place(x=700, y=420, width=80)
+quitButton.place(x=950, y=420, width=80)
 nextLineButton = Button(root, text="Next Line",command=processLine, bg="green")
 nextLineButton.place(x=155, y=420, width=80)
 
@@ -207,9 +457,13 @@ sourceBox.bind("<KeyRelease>", updateLineNumbers)
 lineNumbers = Text(root, width=2, height=18, state="disabled")
 lineNumbers.place(x=50, y=80)
 
-# outputBox is read only
-outputBox = Text(root, height=18, width=40,state="disabled")
-outputBox.place(x=550, y=80)
+# Tokens box
+tokenBox = Text(root, height=18, width=40,state="disabled")
+tokenBox.place(x=415, y=80)
+
+# Parse Tree box
+parseBox = Text(root, height=18, width=54,state="disabled")
+parseBox.place(x=750, y=80)
 
 # run GUI
 root.mainloop()
